@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f6f0">
+  <title>My Recipe Treasure — Your personal recipe book</title>
+  <style>
+    :root{--paper:#f7f6f0;--white:#fffefa;--ink:#293b30;--muted:#758075;--green:#365d43;--line:#dedfd4;--sage:#e9eddf;--orange:#ba683e;--shadow:0 12px 35px #283e2c09}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.6 "Segoe UI",Arial,sans-serif}
+    button,input,textarea,select{font:inherit}button,a,input,textarea,select{-webkit-tap-highlight-color:transparent}
+    button{cursor:pointer}button:disabled{opacity:.55;cursor:wait}button,a{touch-action:manipulation}
+    button:focus-visible,a:focus-visible{outline:3px solid #bf875b;outline-offset:4px}input:focus,textarea:focus,select:focus{outline:2px solid #829c74;outline-offset:2px}
+    button{color:inherit}a{color:var(--green)}svg{vertical-align:middle}h1,h2,h3,p{margin:0}h1,h2,h3,.brand{font-family:Georgia,"Times New Roman",serif;font-weight:400}
+    .shell{max-width:1260px;padding:0 48px;margin:auto}.header{border-bottom:1px solid var(--line)}
+    .header-inner{height:94px;display:flex;align-items:center;justify-content:space-between;gap:24px}.brand{display:flex;align-items:center;gap:11px;font-size:26px;letter-spacing:-1px;text-decoration:none;color:var(--ink)}
+    .brand-mark{width:37px;height:40px;color:var(--green)}.brand small{font-family:"Segoe UI",sans-serif;font-size:10px;display:block;text-transform:uppercase;letter-spacing:2.2px;margin-top:-3px;color:var(--muted)}
+    .header-actions{display:flex;gap:10px;align-items:center}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 17px;border-radius:7px;border:1px solid var(--line);background:transparent;font-size:13px;font-weight:600;white-space:nowrap;transition:background .18s,transform .18s}
+    .btn:hover{background:var(--sage)}.btn-primary{background:var(--green);border-color:var(--green);color:white}.btn-primary:hover{background:#284a35}.btn svg{width:16px;height:16px}
+    .hero{padding:53px 0 32px;position:relative}.eyebrow{font-size:10px;font-weight:700;letter-spacing:2.3px;text-transform:uppercase;color:var(--orange);display:flex;align-items:center;gap:8px;margin-bottom:12px}
+    .eyebrow:before{content:"";width:20px;height:1px;background:var(--orange)}h1{font-size:clamp(34px,4.2vw,51px);line-height:1.16;letter-spacing:-1.6px}.hero h1 em{color:var(--green);font-weight:400}.hero>p{margin-top:13px;color:var(--muted);font-size:14px}
+    .hero-doodle{position:absolute;right:26px;top:31px;width:144px;height:129px;opacity:.65;transform:rotate(8deg)}
+    .ingestion{background:#eeefe5;border:1px solid #e1e4d7;padding:23px 25px 18px;border-radius:12px}.ingestion-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px}.ingestion-heading strong{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px}.pill-small{font-size:9px;letter-spacing:1.1px;text-transform:uppercase;border:1px solid #d5dccb;border-radius:4px;padding:2px 7px;color:#64725c}
+    .import-row{display:flex;align-items:stretch;gap:10px}.input-wrap{position:relative;flex:1;display:flex;background:var(--white);border:1px solid #d8ddce;border-radius:7px;align-items:flex-start}.input-wrap>svg{width:18px;height:18px;margin:15px 0 0 14px;flex-shrink:0;color:#8a9584}
+    #recipe-input{resize:vertical;min-height:51px;height:51px;max-height:250px;flex:1;width:100%;border:0;background:transparent;padding:13px 15px;color:var(--ink);border-radius:7px;font-size:13px;line-height:24px}.import-row>.btn{padding:12px 21px;align-self:flex-start;min-height:51px}
+    .import-help{display:flex;justify-content:space-between;gap:12px;margin-top:11px;font-size:11px;color:var(--muted)}.text-button{border:0;padding:0;background:none;color:var(--green);text-decoration:underline;text-underline-offset:3px;font-size:inherit}
+    main{padding-top:37px!important}.collection-heading{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:21px}.collection-title{display:flex;align-items:center;gap:11px}.collection-title h2{font-size:28px;letter-spacing:-.6px}.count{font-size:11px;color:#76806e;background:#e9ecdf;border-radius:20px;min-width:25px;padding:2px 7px;text-align:center}
+    .search{position:relative;display:flex;align-items:center}.search svg{position:absolute;left:12px;width:16px;height:16px;color:#8a9484}.search input{padding:10px 12px 10px 37px;border:1px solid var(--line);border-radius:7px;background:transparent;width:265px;color:var(--ink);font-size:12px}
+    .filter-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:25px}.filter{background:transparent;border:1px solid var(--line);border-radius:6px;padding:7px 12px;font-size:11px;transition:all .18s;white-space:nowrap}.filter:hover{background:var(--sage)}.filter[aria-pressed=true]{color:white;background:var(--green);border-color:var(--green)}
+    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:25px}.card{position:relative;border:1px solid #e0e1d7;border-radius:11px;background:var(--white);overflow:hidden;box-shadow:0 2px 5px #24372b02;transition:transform .2s,box-shadow .2s}.card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+    .card-art{height:194px;position:relative;overflow:hidden}.card-art>svg{width:100%;height:100%;object-fit:cover}.category-badge{position:absolute;top:14px;left:14px;border:1px solid #ffffff8a;border-radius:4px;padding:3px 8px;font-size:9px;letter-spacing:.7px;text-transform:uppercase;background:#fffffff0;color:#4f6047;z-index:1}
+    .card-body{padding:18px 19px 16px}.card h3{font-size:23px;line-height:1.2;letter-spacing:-.5px;margin-bottom:10px}.card-open{background:none;border:0;text-align:start;padding:0;font:inherit;color:inherit}.card-open:after{content:"";position:absolute;inset:0;z-index:1}.card-open:focus-visible{outline:0}.card:focus-within{outline:3px solid #829c74;outline-offset:3px}
+    .meta{display:flex;gap:13px;align-items:center;color:var(--muted);font-size:11px}.meta>span{display:inline-flex;gap:5px;align-items:center}.meta svg{width:13px;height:13px}.tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:14px}.tag{padding:2px 7px;border-radius:4px;font-size:10px;background:#eff1e8;color:#738067}
+    .card-footer{display:flex;align-items:center;justify-content:space-between;border-top:1px solid #ebede4;margin-top:15px;padding-top:11px;font-size:10px;color:#85907c}.source{position:relative;z-index:2;display:inline-flex;align-items:center;gap:5px;color:#6b7862;text-decoration:none;max-width:85%;overflow-wrap:anywhere}.source:hover{text-decoration:underline}.source svg{width:12px;height:12px}.arrow{font-size:16px;color:#7a8a6c}
+    .note-card{min-height:350px;border:1px dashed #cbd2bf;border-radius:11px;display:flex;align-items:center;justify-content:center;text-align:center;flex-direction:column;padding:30px;background:#f0f1e7;gap:12px}.note-card .note-icon{height:55px;width:55px;border-radius:50%;background:#e3e8d8;color:#6d825c;display:grid;place-items:center}.note-icon svg{width:24px;height:24px}.note-card h3{font-size:24px;line-height:1.2}.note-card p{font-size:12px;max-width:210px;color:var(--muted)}.note-card .btn{margin-top:8px;background:var(--white)}
+    .empty{text-align:center;padding:65px 20px;border:1px dashed var(--line);border-radius:12px;grid-column:1/-1}.empty h3{font-size:27px}.empty p{color:var(--muted);margin:10px 0 20px}
+    footer{margin-top:45px;padding:23px 0 28px;border-top:1px solid var(--line);font-size:10px;color:#8b9384;display:flex;justify-content:space-between;gap:20px}.footer-left{display:flex;gap:7px;align-items:center}.footer-left svg{width:13px;height:13px}.footer-actions{display:flex;gap:18px}.footer-actions button{color:#7b8770}
+    dialog{border:1px solid var(--line);border-radius:15px;padding:0;width:min(760px,calc(100% - 28px));max-height:90dvh;background:var(--white);color:var(--ink);box-shadow:0 30px 100px #15271d40}dialog::backdrop{background:#1b2c235c;backdrop-filter:blur(4px)}.modal-top{padding:24px 28px 18px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;justify-content:space-between;gap:15px}.modal-top h2{font-size:29px;line-height:1.2}.modal-top p{font-size:12px;color:var(--muted);margin-top:7px}.close{border:1px solid var(--line);background:transparent;border-radius:50%;width:30px;height:30px;flex-shrink:0;display:grid;place-items:center;font-size:20px;line-height:1}.modal-content{padding:24px 28px}.form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.field{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:600;margin-bottom:15px}.field input,.field textarea,.field select{background:#fff;border:1px solid var(--line);padding:10px;border-radius:6px;min-width:0;width:100%;color:var(--ink);font-size:13px;font-weight:400}.field textarea{min-height:118px;resize:vertical}.field small{color:var(--muted);font-weight:400;font-size:11px}.modal-actions{display:flex;align-items:center;justify-content:flex-end;gap:9px;margin-top:10px}.error{color:#a6422e;background:#fff0e8;padding:10px 13px;border-radius:6px;font-size:12px;margin-bottom:15px}.error:empty{display:none}.review-note{background:#f5edda;color:#7c6030;font-size:12px;padding:13px 15px;border-radius:7px;margin-bottom:20px}.detail-meta{display:flex;gap:25px;flex-wrap:wrap;background:var(--sage);padding:16px 20px;border-radius:8px;margin-bottom:23px}.detail-meta span{font-size:12px;color:#6f7d64}.detail-meta strong{display:block;color:var(--ink);font-size:16px;font-weight:600}.detail-columns{display:grid;grid-template-columns:1fr 1.25fr;gap:30px}.detail-columns h3{font-size:24px;margin-bottom:15px}.ingredients{display:flex;flex-direction:column;gap:0}.ingredient{display:flex;align-items:flex-start;gap:9px;padding:10px 0;border-bottom:1px solid #eeeee7;font-size:13px;cursor:pointer}.ingredient input{accent-color:var(--green);width:16px;height:16px;margin:3px 0 0;flex-shrink:0}.ingredient:has(input:checked) span{text-decoration:line-through;color:#939989}.steps{list-style:none;padding:0;margin:0;counter-reset:steps}.steps li{counter-increment:steps;display:flex;gap:11px;margin-bottom:18px;font-size:13px;white-space:pre-line}.steps li:before{content:counter(steps,decimal-leading-zero);color:#829471;font:18px Georgia,serif;flex-shrink:0}.detail-bottom{border-top:1px solid var(--line);margin-top:23px;padding-top:18px;display:flex;justify-content:space-between;align-items:center;gap:10px}.danger{color:#a54c3b;border-color:#e3cfc6}.detail-tags{margin:-8px 0 22px}.source-detail{font-size:12px;overflow-wrap:anywhere}.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--green);color:white;box-shadow:var(--shadow);border-radius:8px;padding:12px 20px;font-size:13px;z-index:20;max-width:calc(100% - 30px);width:max-content}.toast[data-error=true]{background:#98472f}[hidden]{display:none!important}.form-checks{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:15px;font-size:12px}.form-checks input{accent-color:var(--green)}.section-label{font-size:12px;font-weight:600;margin-bottom:8px}
+    @media(min-width:1450px){.hero{padding-top:65px}.card-art{height:215px}}
+    @media(max-width:1000px){.shell{padding:0 28px}.grid{gap:18px}.card-art{height:165px}.card h3{font-size:21px}.filter-row{gap:6px}.filter{padding:7px 10px}}
+    @media(max-width:760px){.shell{padding:0 21px}.header-inner{height:79px}.brand{font-size:23px}.header-actions .backup{display:none}.header-actions>.btn{font-size:11px;padding:9px 11px}.hero{padding:36px 0 26px}.hero-doodle{width:90px;right:0;top:24px;opacity:.35}.hero h1{max-width:80%;font-size:38px}.hero>p{max-width:80%;font-size:13px}.ingestion{padding:18px}.import-row{flex-direction:column}.import-row>.btn{align-self:stretch;min-height:44px}.import-help{display:block;font-size:10px}.import-help>span{display:block;margin-bottom:5px}.collection-heading{align-items:flex-start;flex-direction:column;gap:14px}.search,.search input{width:100%}.collection-title h2{font-size:27px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.card-body{padding:15px}.card-art{height:155px}.card h3{font-size:21px}.meta{gap:7px;font-size:10px}.note-card{min-height:330px;padding:20px}.note-card h3{font-size:22px}footer{flex-direction:column;gap:10px}.detail-columns{grid-template-columns:1fr;gap:25px}.modal-content{padding:20px}.modal-top{padding:20px}.detail-bottom{flex-wrap:wrap}.form-grid{gap:10px}}
+    @media(max-width:450px){.grid{grid-template-columns:1fr}.card-art{height:205px}.card h3{font-size:25px}.card-body{padding:19px}.meta{font-size:11px;gap:15px}.note-card{min-height:240px}.hero h1{font-size:34px}.hero-doodle{width:70px}.brand small{font-size:8px;letter-spacing:1.7px}.header-actions>.btn{padding:8px}.filter{font-size:10px}.form-grid{grid-template-columns:1fr}.form-checks{grid-template-columns:1fr}.ingestion-heading{gap:5px}.ingestion-heading strong{font-size:12px}.pill-small{font-size:8px}.detail-meta{gap:20px}.modal-actions{flex-wrap:wrap}}
+    @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+    @media print{body{background:white}body>header,body>section,body>main,body>.toast,dialog:not([open]){display:none!important}dialog[open]{position:static;max-height:none;width:100%;border:0;box-shadow:none}.modal-top .close,.detail-bottom,.ingredient input{display:none}dialog::backdrop{background:transparent}}
+  </style>
+</head>
+<body>
+  <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4m-5 5 5-5 5 5M4 16v5h16v-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m16 16 5 5" stroke="currentColor" stroke-width="1.6"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="m10 13 4-4M8 16l-1 1a4 4 0 0 1-6-6l5-5a4 4 0 0 1 6 0m0 12a4 4 0 0 0 6 0l5-5a4 4 0 0 0-6-6l-1 1" transform="translate(1 0) scale(.9)" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5ZM20 2v4m-2-2h4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="currentColor" fill="none" stroke-width="1.6"/><path d="M12 6v6l4 2" stroke="currentColor" fill="none" stroke-width="1.6"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12M3 6h1M3 12h1M3 18h1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 20C3 10 8 3 21 3c0 12-6 17-14 14m-3 4L17 7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 5c-3-3-8-2-10-1v16c4-2 7-2 10 0 3-2 6-2 10 0V4c-2-1-7-2-10 1Zm0 0v15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+  </svg>
+  <header class="header">
+    <div class="shell header-inner">
+      <a class="brand" href="#" aria-label="My Recipe Treasure home"><svg class="brand-mark"><use href="#i-book"/></svg><span>My Recipe Treasure<small>A little collection. A lot of love.</small></span></a>
+      <div class="header-actions">
+        <button class="btn backup" data-action="import-json"><svg><use href="#i-upload"/></svg>Import JSON</button>
+        <button class="btn backup" data-action="export"><svg><use href="#i-download"/></svg>Export</button>
+        <button class="btn btn-primary" data-action="add"><svg><use href="#i-plus"/></svg>Add recipe</button>
+      </div>
+    </div>
+  </header>
+  <section class="shell">
+    <div class="hero">
+      <div class="eyebrow">Good food, kept close</div>
+      <h1>A home for your<br>next <em>favorite recipe.</em></h1>
+      <p>From the internet, your feed, or a flour-dusted notebook. Keep it all here.</p>
+      <svg class="hero-doodle" viewBox="0 0 150 140" aria-hidden="true"><g fill="none" stroke="#71835e" stroke-width="1.6" stroke-linecap="round"><path d="M71 125C63 80 66 44 92 13M71 105C42 102 36 85 34 71c22 1 34 13 37 34ZM67 81C44 73 43 57 45 45c18 6 25 20 22 36ZM73 61C77 39 97 35 112 37c-5 18-21 26-39 24ZM82 36C78 20 82 10 91 5c7 12 4 23-9 31ZM69 97c10-21 27-23 42-19-9 17-22 23-42 19Z"/><path d="M38 118c-9-24-15-35-27-43m19 25C12 98 7 87 8 78c13 2 21 10 22 22m-5-10c3-13 0-24-8-29-4 12-1 21 8 29"/></g></svg>
+    </div>
+    <form class="ingestion" id="ingest-form">
+      <div class="ingestion-heading"><strong><svg width="17" height="17"><use href="#i-spark"/></svg>A good recipe starts with a little inspiration.</strong><span class="pill-small">Web reader + local parser</span></div>
+      <div class="import-row">
+        <div class="input-wrap"><svg aria-hidden="true"><use href="#i-link"/></svg><textarea id="recipe-input" dir="auto" aria-label="Recipe URL or raw recipe text" placeholder="Paste a recipe link or the recipe itself..." required maxlength="50000"></textarea></div>
+        <button class="btn btn-primary" id="transcribe-button" type="submit"><svg><use href="#i-spark"/></svg><span>Transcribe &amp; Import</span></button>
+      </div>
+      <div class="import-help"><span>Public recipe pages, Instagram captions, or text in English or Hebrew / עברית. Add missing titles during review.</span><span>Webpage links are sent to a reader service. <button class="text-button" type="button" id="demo-info">Details &amp; privacy</button></span></div>
+    </form>
+  </section>
+  <main class="shell">
+    <div class="collection-heading">
+      <div class="collection-title"><h2>Your recipe collection</h2><span class="count" id="recipe-count">5</span></div>
+      <label class="search"><svg aria-hidden="true"><use href="#i-search"/></svg><input id="search" dir="auto" type="search" placeholder="Find a recipe, ingredient, or tag..." aria-label="Search recipes"></label>
+    </div>
+    <nav class="filter-row" id="filters" aria-label="Filter by category"></nav>
+    <div class="grid" id="recipe-grid" aria-live="polite"></div>
+    <footer>
+      <span class="footer-left"><svg aria-hidden="true"><use href="#i-leaf"/></svg>Made for the joy of cooking. Saved in this browser, just for you.</span>
+      <div class="footer-actions"><button class="text-button" data-action="import-json">Import from JSON</button><button class="text-button" data-action="export">Export to JSON</button></div>
+    </footer>
+  </main>
+  <input type="file" id="json-file" accept=".json,application/json" hidden>
+  <dialog id="editor" aria-labelledby="editor-title">
+    <div class="modal-top"><div><h2 id="editor-title">A recipe worth keeping</h2><p id="editor-subtitle">A family favorite, a happy accident, your next signature dish.</p></div><button class="close" type="button" data-close="editor" aria-label="Close recipe editor">&times;</button></div>
+    <form id="recipe-form" class="modal-content">
+      <div class="review-note" id="editor-notice" hidden></div>
+      <div class="error" id="editor-error" role="alert"></div>
+      <label class="field">Recipe title <small>Required before saving.</small><input name="title" dir="auto" required maxlength="180" placeholder="Grandma's Sunday pancakes"></label>
+      <label class="field">Source URL <small>Optional. Use an http:// or https:// link.</small><input name="source" type="url" maxlength="2000" placeholder="https://..."></label>
+      <div class="form-grid">
+        <label class="field">Prep time (minutes)<input name="prep" type="number" min="0" max="100000" step="1" required value="0"></label>
+        <label class="field">Cook time (minutes)<input name="cook" type="number" min="0" max="100000" step="1" required value="0"></label>
+        <label class="field">Servings<input name="servings" type="number" min="1" max="10000" step="1" required value="4"></label>
+      </div>
+      <label class="field">Rest / fermentation time (minutes)<small>Optional; included in total time.</small><input name="rest" type="number" min="0" max="100000" step="1" required value="0"></label>
+      <p class="section-label" id="categories-label">Categories <span style="font-weight:400;color:var(--muted)">(leave blank to auto-categorize)</span></p>
+      <div class="form-checks" id="category-checkboxes" role="group" aria-labelledby="categories-label"></div>
+      <label class="field">Tags<small>Separate with commas, e.g. vegetarian, weeknight, high-protein.</small><input name="tags" dir="auto" maxlength="1000" placeholder="homemade, comfort-food"></label>
+      <label class="field">Ingredients<small>One ingredient per line, including amounts.</small><textarea name="ingredients" dir="auto" required maxlength="30000" placeholder="200 g all-purpose flour&#10;2 large eggs&#10;250 ml milk"></textarea></label>
+      <label class="field">Instructions<small>One step per line. Include resting times and food-safety details where relevant.</small><textarea name="steps" dir="auto" required maxlength="50000" placeholder="Whisk the dry ingredients together.&#10;Add the eggs and milk; stir until just combined."></textarea></label>
+      <div class="modal-actions"><button class="btn" type="button" data-close="editor">Cancel</button><button class="btn btn-primary" type="submit">Save recipe</button></div>
+    </form>
+  </dialog>
+  <dialog id="detail" aria-labelledby="detail-title">
+    <div class="modal-top"><div><h2 id="detail-title" dir="auto"></h2><p id="detail-category"></p></div><button class="close" data-close="detail" aria-label="Close recipe">&times;</button></div>
+    <div class="modal-content" id="detail-content"></div>
+  </dialog>
+  <dialog id="confirm-dialog" aria-labelledby="confirm-title">
+    <div class="modal-top"><h2 id="confirm-title">Remove this recipe?</h2><button class="close" data-close="confirm-dialog" aria-label="Cancel deletion">&times;</button></div>
+    <div class="modal-content"><p>This removes the recipe and its cooking checklist from this browser. Export a backup first if you'd like to keep a copy.</p><div class="modal-actions"><button class="btn" data-close="confirm-dialog">Keep recipe</button><button class="btn danger" id="confirm-delete">Delete recipe</button></div></div>
+  </dialog>
+  <dialog id="info-dialog" aria-labelledby="info-title">
+    <div class="modal-top"><h2 id="info-title">A little note about the parser</h2><button class="close" data-close="info-dialog" aria-label="Close information">&times;</button></div>
+    <div class="modal-content"><p>For a webpage link, this app sends the URL to <a href="https://r.jina.ai/" target="_blank" rel="noopener noreferrer">Jina Reader</a> to retrieve readable page text, then looks for English or Hebrew ingredient and instruction headings. Public recipe pages and some public Instagram captions work; paywalls, blocked pages, unavailable captions, and unusual layouts may not. Videos and audio are not transcribed.</p><p style="margin-top:15px">The reader service is operated by a third party and its availability, limits, and data handling are subject to its policies. Don't import private or password-protected links. Nothing is saved until you review and confirm the draft. Recipe text you paste is parsed locally. For best results, put each ingredient and step on its own line under headings such as Ingredients / Instructions or מצרכים / אופן ההכנה.</p><p style="margin-top:15px">This is structured extraction, not translation or an AI model. For AI-based extraction, a developer can connect the <code>RecipeAI.extract</code> adapter to a secure backend. Never embed a private API key in this file.</p><div class="modal-actions"><button class="btn btn-primary" data-close="info-dialog">Got it</button></div></div>
+  </dialog>
+  <div class="toast" id="toast" role="status" hidden></div>
+  <script>
+    "use strict";
+    const STORAGE_KEY = "crumb-keeper.recipes.v1";
+    const CATEGORIES = [
+      {id:"bread",label:"Bread / Sourdough",short:"Sourdough",test:/\b(sourdough|bread|focaccia|baguette|starter|yeast)\b|לחם|מחמצת|פוקצ'ה|בגט|שמרים/i},
+      {id:"sweet",label:"Sweet / Desserts",short:"Sweet",test:/\b(cake|cookie|brownie|dessert|chocolate|tart|muffin|pudding)\b|עוגה|עוגת|עוגות|עוגי[יהו]|קינוח|שוקולד|בראוניז|מאפינס/i},
+      {id:"savory",label:"Savory / Dinner",short:"Savory",test:/\b(dinner|chicken|salmon|pasta|beef|roast|curry|risotto)\b|ארוחת ערב|עוף|סלמון|פסטה|בקר|ריזוטו/i},
+      {id:"lunch",label:"Lunch",short:"Lunch",test:/\b(lunch|salad|sandwich|soup|grain bowl)\b|ארוחת צהריים|סלט|כריך|מרק/i},
+      {id:"breakfast",label:"Breakfast & Brunch",short:"Breakfast",test:/\b(breakfast|brunch|pancake|pancakes|oats|granola|omelet|toast)\b|ארוחת בוקר|פנקייק|שיבולת שועל|גרנולה|חביתה/i},
+      {id:"snacks",label:"Snacks & Appetizers",short:"Snacks",test:/\b(snack|appetizer|hummus|dip|crackers|bites)\b|חטיף|חטיפים|מתאבן|מתאבנים|חומוס|מטבל|קרקרים/i},
+      {id:"drinks",label:"Drinks",short:"Drinks",test:/\b(drink|smoothie|lemonade|cocktail|latte|iced tea|juice)\b|משקה|משקאות|שייק|לימונדה|קוקטייל|מיץ/i}
+    ];
+    const seedRecipes = [
+      {id:"sample-bread",title:"The everyday sourdough",source:"",prep:35,cook:45,rest:1080,servings:10,categories:["bread"],tags:["slow-living","fermentation"],art:"bread",ingredients:["500 g strong bread flour","350 g water, room temperature","100 g active sourdough starter","10 g fine sea salt"],steps:["Mix flour, water, and starter until no dry flour remains. Cover and rest for 30 minutes.","Add salt and knead gently. Perform 4 sets of stretch-and-folds at 30-minute intervals.","Cover and let rise at room temperature for 4–6 hours, until airy and increased by about half. Timing depends on your kitchen temperature.","Shape into a round, place seam-side up in a floured banneton, and refrigerate for 12 hours.","Preheat a Dutch oven to 240°C / 465°F. Turn out the dough, score, and bake covered for 25 minutes.","Remove the lid and bake at 220°C / 425°F for 20 minutes, until deeply golden. Cool completely before slicing."],checked:[]},
+      {id:"sample-sweet",title:"Brown butter chocolate cookies",source:"",prep:20,cook:12,rest:60,servings:12,categories:["sweet"],tags:["weekend-baking","comfort-food"],art:"cookies",ingredients:["115 g unsalted butter","150 g light brown sugar","50 g white sugar","1 large egg","1 tsp vanilla extract","180 g all-purpose flour","1/2 tsp baking soda","1/2 tsp fine salt","150 g dark chocolate, chopped"],steps:["Brown the butter in a saucepan over medium heat, stirring until golden and nutty. Pour into a bowl and cool until just warm.","Whisk in both sugars, then the egg and vanilla.","Fold in flour, baking soda, salt, and chopped chocolate. Refrigerate for 1 hour.","Heat the oven to 180°C / 350°F. Portion into 12 balls on lined trays, leaving room to spread.","Bake for 10–12 minutes until the edges are golden. Rest on the tray for 10 minutes before transferring to a rack."],checked:[]},
+      {id:"sample-savory",title:"Lemony one-pot orzo",source:"",prep:10,cook:20,rest:0,servings:4,categories:["savory"],tags:["one-pot","vegetarian","weeknight"],art:"orzo",ingredients:["2 tbsp olive oil","3 garlic cloves, minced","300 g dry orzo","900 ml vegetable stock","150 g baby spinach","1 lemon, zest and juice","60 g Parmesan or vegetarian alternative","Salt and black pepper, to taste"],steps:["Warm olive oil in a deep pan over medium heat. Add garlic and stir for 30 seconds.","Add orzo and toast for 2 minutes. Pour in the stock and bring to a gentle simmer.","Cook uncovered for 10–12 minutes, stirring often and adding a splash of water if needed, until the orzo is tender.","Fold in spinach until wilted. Remove from heat and stir in lemon zest, lemon juice, and grated cheese.","Season to taste and serve warm with a little extra black pepper."],checked:[]},
+      {id:"sample-breakfast",title:"A slower Sunday pancake stack",source:"",prep:10,cook:15,rest:0,servings:3,categories:["breakfast"],tags:["family-favorite","quick"],art:"pancakes",ingredients:["150 g all-purpose flour","2 tsp baking powder","1 tbsp sugar","1 pinch salt","200 ml milk","1 large egg","25 g melted butter, plus extra for the pan","100 g blueberries","Maple syrup, to serve"],steps:["Whisk flour, baking powder, sugar, and salt in a bowl.","In another bowl whisk milk, egg, and melted butter. Fold into the dry ingredients until just combined.","Heat a lightly buttered nonstick pan over medium heat. Add small ladles of batter.","Cook for about 2 minutes until bubbles form and the edges set. Flip and cook for another 1–2 minutes until cooked through.","Stack and serve with blueberries and maple syrup."],checked:[]},
+      {id:"sample-lunch",title:"The feel-good green bowl",source:"",prep:15,cook:15,rest:0,servings:2,categories:["lunch"],tags:["plant-based","meal-prep"],art:"salad",ingredients:["100 g quinoa, rinsed","200 ml water","1 avocado, sliced","1/2 cucumber, diced","100 g shelled edamame, cooked","2 handfuls baby greens","2 tbsp tahini","1 tbsp lemon juice","2 tbsp water, plus more as needed","Salt, to taste"],steps:["Combine quinoa and 200 ml water in a small saucepan. Bring to a boil, cover, and simmer for 15 minutes. Rest covered for 5 minutes.","Whisk tahini, lemon juice, 2 tbsp water, and salt into a pourable dressing.","Divide greens and quinoa between two bowls. Arrange cucumber, cooked edamame, and avocado on top.","Drizzle with the dressing and serve."],checked:[]}
+    ];
+    let recipes = [], activeCategory = "all", searchTerm = "", editingId = null, detailId = null;
+    let pendingImport = null, storageBlocked = false, importBusy = false, toastTimer;
+    const $ = selector => document.querySelector(selector);
+    const escapeHTML = value => String(value).replace(/[&<>"']/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));
+    const icon = name => `<svg aria-hidden="true"><use href="#i-${name}"/></svg>`;
+    const uid = () => globalThis.crypto?.randomUUID?.() || `recipe-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const clone = value => JSON.parse(JSON.stringify(value));
+    const categoryLabel = id => CATEGORIES.find(category => category.id === id)?.label || id;
+    const formatTime = minutes => minutes === 0 ? "Not specified" : minutes < 60 ? `${minutes} min` : `${Math.floor(minutes/60)} hr${minutes%60 ? ` ${minutes%60} min` : ""}`;
+    const totalTime = recipe => recipe.prep + recipe.cook + recipe.rest;
+    const lines = text => text.split(/\r?\n/).map(line => line.replace(/^\s*(?:[-*•]\s*|\d+[.)](?:\s+|$))/, "").trim()).filter(Boolean);
+    function safeURL(value) {
+      if (!value) return "";
+      const url = new URL(value);
+      if (!["http:","https:"].includes(url.protocol)) throw new Error("Source links must use http:// or https://.");
+      return url.href;
+    }
+    function notify(message, error = false) {
+      clearTimeout(toastTimer);
+      const toast = $("#toast");
+      toast.textContent = message;
+      toast.dataset.error = String(error);
+      toast.hidden = false;
+      toastTimer = setTimeout(() => { toast.hidden = true; }, error ? 10000 : 4500);
+    }
+    // Validate storage, file imports, and API responses through the same trust boundary.
+    function normalizeRecipe(input, {allowUntitled = false} = {}) {
+      if (!input || typeof input !== "object" || Array.isArray(input)) throw new Error("Every recipe must be an object.");
+      const text = (value, label, max) => {
+        if (typeof value !== "string" || !value.trim() || value.length > max) throw new Error(`${label} is missing or too long.`);
+        return value.trim();
+      };
+      const list = (value, label, maxCount, maxLength) => {
+        if (!Array.isArray(value) || !value.length || value.length > maxCount) throw new Error(`${label} must be a nonempty list (up to ${maxCount} entries).`);
+        return value.map(item => text(item, label, maxLength));
+      };
+      const number = (value, label, min, max) => {
+        if (!Number.isInteger(value) || value < min || value > max) throw new Error(`${label} must be a whole number from ${min} to ${max}.`);
+        return value;
+      };
+      const title = allowUntitled && (input.title == null || (typeof input.title === "string" && !input.title.trim()))
+        ? "" : text(input.title,"Title",180);
+      if (input.source != null && typeof input.source !== "string") throw new Error("Source must be a URL string.");
+      if ((input.source || "").length > 2000) throw new Error("Source URL is too long.");
+      const ingredients = list(input.ingredients,"Ingredients",300,2000);
+      const steps = list(input.steps,"Instructions",200,10000);
+      if (!Array.isArray(input.categories) || !input.categories.length || input.categories.some(id => !CATEGORIES.some(category => category.id === id))) throw new Error("Choose at least one valid category.");
+      if (input.tags != null && (!Array.isArray(input.tags) || input.tags.length > 50 || input.tags.some(tag => typeof tag !== "string" || !tag.trim() || tag.length > 80))) throw new Error("Tags must be a list of up to 50 nonempty strings, each up to 80 characters.");
+      if (input.checked != null && (!Array.isArray(input.checked) || input.checked.some(index => !Number.isInteger(index) || index < 0 || index >= ingredients.length))) throw new Error("Invalid ingredient checklist.");
+      return {
+        id:typeof input.id === "string" && input.id.length > 0 && input.id.length <= 150 ? input.id : uid(),
+        title,source:safeURL(input.source || ""),prep:number(input.prep,"Prep time",0,100000),
+        cook:number(input.cook,"Cook time",0,100000),rest:number(input.rest ?? 0,"Rest time",0,100000),
+        servings:number(input.servings,"Servings",1,10000),categories:[...new Set(input.categories)],
+        tags:[...new Set((input.tags || []).map(tag => tag.trim()))],ingredients,steps,
+        checked:[...new Set(input.checked || [])],art:["bread","cookies","orzo","pancakes","salad","drink","snack"].includes(input.art) ? input.art : artFor(input.categories),
+        demo:input.demo === true
+      };
+    }
+    function readRecipeFile(data) {
+      if (!Array.isArray(data) && (!data || data.version !== 1 || !Array.isArray(data.recipes))) throw new Error("Use a recipe array or a version 1 My Recipe Treasure backup.");
+      const items = Array.isArray(data) ? data : data.recipes;
+      if (items.length > 2000) throw new Error("A backup can contain at most 2,000 recipes.");
+      const validated = items.map((item, index) => {
+        try { return normalizeRecipe(item); }
+        catch(error) { throw new Error(`Recipe ${index + 1}: ${error.message}`); }
+      });
+      if (new Set(validated.map(recipe => recipe.id)).size !== validated.length) throw new Error("This backup contains duplicate recipe IDs.");
+      return validated;
+    }
+    function commit(next) {
+      if (storageBlocked) { notify("Saved data could not be loaded. Export a backup and repair or clear this site's storage before making changes.",true); return false; }
+      try { localStorage.setItem(STORAGE_KEY,JSON.stringify({version:1,recipes:next})); }
+      catch(error) { console.error("Recipe storage failed",error); notify("Couldn't save to this browser. Storage may be full or disabled. Export a backup before trying again.",true); return false; }
+      recipes = next;
+      render();
+      return true;
+    }
+    function load() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        recipes = saved === null ? clone(seedRecipes) : readRecipeFile(JSON.parse(saved));
+        if (saved === null) localStorage.setItem(STORAGE_KEY,JSON.stringify({version:1,recipes}));
+      } catch(error) {
+        console.error("Recipe storage could not be loaded",error);
+        storageBlocked = true;
+        notify("Browser storage is unavailable or invalid. Changes are disabled to protect existing data; you can still view samples and export.",true);
+        recipes = clone(seedRecipes);
+      }
+      render();
+    }
+    function categorize(title, ingredients) {
+      const content = `${title} ${ingredients.join(" ")}`;
+      const matches = CATEGORIES.filter(category => category.test.test(content)).map(category => category.id);
+      return matches.length ? matches : ["savory"];
+    }
+    function artFor(categories) {
+      return ({bread:"bread",sweet:"cookies",savory:"orzo",lunch:"salad",breakfast:"pancakes",drinks:"drink",snacks:"snack"})[categories[0]] || "salad";
+    }
+    // Original inline SVG illustrations keep the app fully offline and dependency-free.
+    function foodArt(type) {
+      const palettes = {bread:["#d0b998","#a98b68"],cookies:["#bfa489","#967a62"],orzo:["#a8b29a","#788667"],pancakes:["#dbccae","#baa380"],salad:["#b4b99e","#8e9878"],drink:["#cbd2b1","#a4b586"],snack:["#dac7a9","#bea580"]};
+      const [bg,shade] = palettes[type] || palettes.salad;
+      let food = "";
+      if (type === "bread") {
+        food = `<ellipse cx="198" cy="143" rx="131" ry="62" fill="#60442d" opacity=".18"/><path d="M60 155Q36 102 96 63Q151 26 230 52Q295 78 297 136Q292 177 232 190Q127 214 60 155Z" fill="#a86732"/><path d="M62 145Q42 102 101 65Q166 29 234 58Q286 80 290 130Q286 168 226 179Q121 204 62 145" fill="#c68e4e"/><path d="M78 132Q76 86 136 62Q193 42 243 78" fill="none" stroke="#efd9ac" stroke-width="13" stroke-linecap="round"/><path d="M91 141Q130 113 149 69m-8 92q35-25 43-97m9 96q28-37 26-86" stroke="#f4e3bf" stroke-width="9" fill="none" stroke-linecap="round"/><path d="m95 133 32-27m22 44 18-29m36 24 11-27" stroke="#855025" stroke-width="3" opacity=".5"/><g fill="#f3e5c4" opacity=".5">${Array.from({length:38},(_,i)=>`<circle cx="${75+(i*37)%199}" cy="${74+(i*23)%91}" r="${i%3+0.5}"/>`).join("")}</g><path d="m298 23-7 32m-10-25 17 10m-15 3 12 6" stroke="#786e43" stroke-width="2"/>`;
+      } else if (type === "cookies") {
+        food = `<path d="m44 20 265 6 17 185-296-7Z" fill="#e1cfb8" transform="rotate(-8 180 110)"/>`;
+        [[102,80,40],[194,63,39],[265,110,43],[172,144,45],[78,168,34]].forEach(([x,y,r],j) => {
+          food += `<ellipse cx="${x+3}" cy="${y+6}" rx="${r}" ry="${r*.8}" fill="#63442c" opacity=".22"/><ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r*.82}" fill="#b57b41" stroke="#9e6535" stroke-width="2"/><ellipse cx="${x}" cy="${y-3}" rx="${r-4}" ry="${r*.72}" fill="#d2a165"/>`;
+          for(let k=0;k<8;k++){const a=k*2.4+j;const dx=Math.cos(a)*r*.58,dy=Math.sin(a)*r*.51;food+=`<path d="m${x+dx} ${y+dy} 8 -2 2 7-7 3Z" fill="#523b2b" transform="rotate(${k*38} ${x+dx} ${y+dy})"/>`;}
+        });
+      } else if (type === "pancakes") {
+        food = `<ellipse cx="180" cy="151" rx="134" ry="62" fill="#ede9df" stroke="#e0dacd" stroke-width="5"/><ellipse cx="180" cy="153" rx="107" ry="44" fill="#d5cbb7"/>`;
+        [143,126,109,92].forEach((y,i)=>{food+=`<ellipse cx="176" cy="${y+7}" rx="${77-i*2}" ry="33" fill="#aa713a"/><ellipse cx="176" cy="${y}" rx="${77-i*2}" ry="31" fill="#e6bb76" stroke="#c28c4c" stroke-width="3"/>`;});
+        food+=`<ellipse cx="176" cy="90" rx="57" ry="21" fill="#cc914f"/><path d="M159 82q25-13 42 0l-4 19-44-2Z" fill="#f4df91"/><path d="M186 96q26 3 22 32v25q-2 12-10 7V123q-4-16-18-15" fill="#94602d" opacity=".8"/>`;
+        [[129,74],[138,63],[117,89],[213,172],[231,168],[241,181],[117,168]].forEach(([x,y])=>{food+=`<circle cx="${x}" cy="${y}" r="8" fill="#37455b"/><circle cx="${x-2}" cy="${y-2}" r="3" fill="#718093"/>`;});
+        food+=`<path d="M231 56q-17-20-32-7 5 19 32 7Z" fill="#607b46"/>`;
+      } else if (type === "drink") {
+        food=`<ellipse cx="181" cy="187" rx="62" ry="16" fill="#71805d" opacity=".25"/><path d="m128 39 13 140q40 22 80 0l12-140Z" fill="#edf1da" opacity=".8" stroke="#fff9" stroke-width="3"/><path d="m134 77 10 99q39 20 74 0l10-99Z" fill="#b7c968"/><ellipse cx="181" cy="77" rx="47" ry="12" fill="#dfdf8a"/><path d="m196 101 32-87" stroke="#55744e" stroke-width="5"/><circle cx="135" cy="63" r="29" fill="#e8dc72" stroke="#f4ecc5" stroke-width="5"/><path d="m135 38v51m-24-25h48m-42-17 36 35m-35 0 35-36" stroke="#f5edbc" stroke-width="2"/><path d="m169 75 13 4-8 15-15-5Zm27 18 18 3-8 19-15-8Z" fill="#f1f3ce" opacity=".7"/>`;
+      } else {
+        food = `<ellipse cx="182" cy="127" rx="132" ry="85" fill="#536147" opacity=".22"/><ellipse cx="180" cy="115" rx="131" ry="89" fill="#eeeee1" stroke="#d7dac9" stroke-width="5"/><ellipse cx="180" cy="115" rx="111" ry="72" fill="${type==="orzo"?"#d6c48c":"#789052"}"/>`;
+        if(type==="orzo") {
+          for(let i=0;i<115;i++){const a=i*2.4,r=Math.sqrt(i/115);let x=180+Math.cos(a)*101*r,y=115+Math.sin(a)*63*r;food+=`<ellipse cx="${x}" cy="${y}" rx="7" ry="2.8" fill="${["#e4d39c","#c1ad70","#efdfa9"][i%3]}" transform="rotate(${i*37} ${x} ${y})"/>`;}
+          [[111,88],[149,138],[222,91],[237,143],[184,69],[113,128],[182,166]].forEach(([x,y],i)=>{food+=`<path d="M${x-13} ${y}q11-24 28-7-6 22-28 7Z" fill="${i%2?"#637e3f":"#4e713d"}"/>`;});
+          food+=`<path d="M247 55a31 31 0 0 1 0 62l-8-31Z" fill="#e5cb65" stroke="#f2e7af" stroke-width="5"/><path d="m246 86 22-16m-22 16 26 7m-26-7 14 22" stroke="#f4e8ac" stroke-width="2"/>`;
+        } else if(type==="snack") {
+          food+=`<ellipse cx="180" cy="116" rx="79" ry="48" fill="#d6b980"/><path d="M128 118c0-44 100-42 100-2s-78 35-78 1 55-23 55 0-32 19-32 0" fill="none" stroke="#c09a5e" stroke-width="5"/><path d="m77 66 48-15-13 43Zm157 94 44-19 2 42Z" fill="#d6ad70"/><g fill="#5b7c47"><circle cx="174" cy="102" r="4"/><circle cx="194" cy="126" r="5"/><circle cx="158" cy="133" r="3"/></g>`;
+        } else {
+          for(let i=0;i<35;i++){let a=i*2.4,r=Math.sqrt(i/35);const x=180+Math.cos(a)*100*r,y=115+Math.sin(a)*62*r;food+=`<ellipse cx="${x}" cy="${y}" rx="17" ry="10" transform="rotate(${i*37} ${x} ${y})" fill="${["#456a3a","#6d8946","#9caf66"][i%3]}"/>`;}
+          food+=`<path d="M176 53q-61 33-56 81 40 23 73-3" stroke="#acc375" stroke-width="14" fill="none"/><path d="M194 56q-45 33-43 80" stroke="#d0d795" stroke-width="12" fill="none"/><path d="M213 66q-40 29-34 74" stroke="#c2d18a" stroke-width="11" fill="none"/>`;
+          for(let i=0;i<25;i++){food+=`<circle cx="${220+(i*13)%42}" cy="${99+(i*17)%47}" r="5" fill="${i%2?"#a2b265":"#c3cf8b"}"/>`;}
+          for(let i=0;i<40;i++){food+=`<circle cx="${100+(i*17)%49}" cy="${101+(i*11)%48}" r="2" fill="#e5d6a5"/>`;}
+        }
+      }
+      return `<svg viewBox="0 0 360 224" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustrated ${type}"><defs><linearGradient id="bg-${type}" x2="1" y2="1"><stop stop-color="${bg}"/><stop offset="1" stop-color="${shade}"/></linearGradient></defs><rect width="360" height="224" fill="url(#bg-${type})"/><path d="m0 181 360-79v122H0Z" fill="#ffffff0b"/><path d="M20 0 0 126m45-126L7 224" stroke="#fff" opacity=".07" stroke-width="12"/>${food}</svg>`;
+    }
+    function render() {
+      $("#filters").innerHTML = [{id:"all",short:"All recipes"},...CATEGORIES].map(category => `<button class="filter" data-category="${category.id}" aria-pressed="${activeCategory===category.id}">${escapeHTML(category.short)}</button>`).join("");
+      const query = searchTerm.toLocaleLowerCase().trim();
+      const visible = recipes.filter(recipe => (activeCategory==="all" || recipe.categories.includes(activeCategory)) && `${recipe.title} ${recipe.ingredients.join(" ")} ${recipe.tags.join(" ")}`.toLocaleLowerCase().includes(query));
+      $("#recipe-count").textContent = `${visible.length}`;
+      $("#recipe-count").title = `${visible.length} shown, ${recipes.length} total`;
+      const cards = visible.map(recipe => {
+        const host = recipe.source ? new URL(recipe.source).hostname.replace(/^www\./,"") : "";
+        return `<article class="card">
+          <div class="card-art"><span class="category-badge">${escapeHTML(CATEGORIES.find(c=>c.id===recipe.categories[0]).short)}</span>${foodArt(recipe.art)}</div>
+          <div class="card-body"><h3><button class="card-open" dir="auto" data-open="${escapeHTML(recipe.id)}">${escapeHTML(recipe.title)}</button></h3>
+          <div class="meta"><span>${icon("clock")}${formatTime(totalTime(recipe))}</span><span>${icon("list")}${recipe.ingredients.length} ingredients</span></div>
+          <div class="tags">${recipe.tags.slice(0,3).map(tag=>`<span class="tag" dir="auto">${escapeHTML(tag)}</span>`).join("")}${recipe.demo?'<span class="tag">demo recipe</span>':""}</div>
+          <div class="card-footer">${host ? `<a class="source" href="${escapeHTML(recipe.source)}" target="_blank" rel="noopener noreferrer">${icon("link")}${escapeHTML(host)}</a>` : `<span class="source">${icon("book")}${recipe.id.startsWith("sample-")?"From our kitchen":"From your notebook"}</span>`}<span class="arrow" aria-hidden="true">&#8599;</span></div></div>
+        </article>`;
+      }).join("");
+      $("#recipe-grid").innerHTML = visible.length ? cards : `<div class="empty"><h3>${recipes.length?"Nothing simmering here.":"Your next favorite starts here."}</h3><p>${recipes.length?"Try another ingredient, tag, or category.":"Paste a recipe above, import a backup, or add one by hand."}</p><button class="btn" data-action="${recipes.length?"reset":"add"}">${recipes.length?"Clear filters":"Add your first recipe"}</button></div>`;
+      if (visible.length && !query && activeCategory === "all") $("#recipe-grid").insertAdjacentHTML("beforeend",`<div class="note-card"><div class="note-icon">${icon("plus")}</div><h3>Something delicious<br>is waiting to be saved.</h3><p>A recipe you love deserves a place in your collection.</p><button class="btn" data-action="add">Add a little inspiration ${icon("plus")}</button></div>`);
+    }
+    function openEditor(recipe = null, notice = "") {
+      editingId = recipe && recipes.some(item=>item.id===recipe.id) ? recipe.id : null;
+      pendingImport = recipe;
+      const form = $("#recipe-form");
+      form.reset();
+      $("#editor-error").textContent = "";
+      $("#editor-title").textContent = editingId ? "A little refinement" : recipe ? "Review your recipe" : "A recipe worth keeping";
+      $("#editor-notice").textContent = notice;
+      $("#editor-notice").hidden = !notice;
+      for (const key of ["title","source","prep","cook","rest","servings"]) form.elements[key].value = recipe ? recipe[key] : ({prep:0,cook:0,rest:0,servings:4}[key] ?? "");
+      form.elements.tags.value = recipe?.tags.join(", ") || "";
+      form.elements.ingredients.value = recipe?.ingredients.join("\n") || "";
+      form.elements.steps.value = recipe?.steps.join("\n") || "";
+      $("#category-checkboxes").innerHTML = CATEGORIES.map(category=>`<label><input type="checkbox" name="category" value="${category.id}" ${recipe?.categories.includes(category.id)?"checked":""}> ${escapeHTML(category.label)}</label>`).join("");
+      $("#editor").showModal();
+      if (recipe && !recipe.title) form.elements.title.focus();
+    }
+    function openDetail(id) {
+      const recipe = recipes.find(item=>item.id===id);
+      if (!recipe) return;
+      detailId = id;
+      $("#detail-title").textContent = recipe.title;
+      $("#detail-category").textContent = recipe.categories.map(categoryLabel).join(" · ");
+      $("#detail-content").innerHTML = `${recipe.demo?'<div class="review-note">Demo recipe: these ingredients and instructions were not extracted from the source. Verify them before cooking.</div>':""}
+        <div class="detail-meta"><span>Prep<strong>${formatTime(recipe.prep)}</strong></span><span>Cook<strong>${formatTime(recipe.cook)}</strong></span>${recipe.rest?`<span>Rest / rise<strong>${formatTime(recipe.rest)}</strong></span>`:""}<span>Servings<strong>${recipe.servings}</strong></span></div>
+        <div class="tags detail-tags">${recipe.tags.map(tag=>`<span class="tag" dir="auto">${escapeHTML(tag)}</span>`).join("")}</div>
+        <div class="detail-columns"><section><h3>Ingredients</h3><div class="ingredients">${recipe.ingredients.map((ingredient,index)=>`<label class="ingredient"><input type="checkbox" data-ingredient="${index}" ${recipe.checked.includes(index)?"checked":""}><span dir="auto">${escapeHTML(ingredient)}</span></label>`).join("")}</div></section><section><h3>Let's make it</h3><ol class="steps">${recipe.steps.map(step=>`<li><span dir="auto">${escapeHTML(step)}</span></li>`).join("")}</ol></section></div>
+        <div class="detail-bottom"><div>${recipe.source?`<a class="source-detail" href="${escapeHTML(recipe.source)}" target="_blank" rel="noopener noreferrer">View original source &#8599;</a>`:'<span class="source-detail">From your recipe book</span>'}</div><div style="display:flex;gap:8px"><button class="btn danger" id="delete-recipe">Delete</button><button class="btn btn-primary" id="edit-recipe">Edit recipe &amp; tags</button></div></div>`;
+      if (!$("#detail").open) $("#detail").showModal();
+    }
+    function parseMinutes(value) {
+      const hebrew=value.replace(/[־–—]/g,"-");
+      const hour=hebrew.match(/(\d+(?:\.\d+)?)\s*(?:שעות|שעה)(?![א-ת])/);
+      const minute=hebrew.match(/(\d+(?:\.\d+)?)\s*(?:דקות|דקה|דק(?:׳|'|")?)(?![א-ת])/);
+      const hours=hour ? Number(hour[1]) : /שעתיים/.test(hebrew) ? 2 : /חצי\s*שעה/.test(hebrew) ? .5 : /שעה/.test(hebrew) ? 1 : 0;
+      if (hours || minute) return Math.round((hours + (/(?:שעה|שעות|שעתיים)\s*ו?חצי/.test(hebrew) ? .5 : 0))*60 + (minute ? Number(minute[1]) : 0));
+      const duration=value.match(/(\d+(?:\.\d+)?)\s*(hours?|hrs?|h)\b(?:\s*(?:and\s*)?(\d+(?:\.\d+)?)\s*(minutes?|mins?|m)\b)?|(\d+(?:\.\d+)?)\s*(minutes?|mins?|m)\b/i);
+      if(duration) {
+        const hours=duration[1] ? Number(duration[1])*60 : 0;
+        const minutes=duration[3] ? Number(duration[3]) : duration[5] ? Number(duration[5]) : 0;
+        return Math.round(hours+minutes);
+      }
+      const numeric=value.match(/^\s*(\d+)\s*$/);
+      return numeric ? Number(numeric[1]) : 0;
+    }
+    function sectionKind(text) {
+      const value=cleanMarkdown(text).replace(/[:：]\s*$/,"").trim();
+      if (/^(?:ingredients?|what you.?ll need|what you need|shopping list)(?:\b|$)/i.test(value) ||
+          /^(?:מצרכים|המצרכים|מרכיבים|המרכיבים|רכיבים|רשימת מצרכים)(?:\s|[(:：]|$)/.test(value)) return "ingredients";
+      if (/^(?:method|directions?|instructions?|preparation|steps?)(?:\b|$)/i.test(value) ||
+          /^(?:אופן ההכנה|אופן הכנה|הוראות הכנה|הוראות ההכנה|שלבי ההכנה|שלבי הכנה|הכנה)(?:\s|[(:：]|$)/.test(value)) return "steps";
+      return "";
+    }
+    function cleanMarkdown(value) {
+      return value.replace(/!\[([^\]]*)\]\([^)]+\)/g,"$1")
+        .replace(/\[([^\]]+)\]\([^)]+\)/g,"$1")
+        .replace(/<https?:\/\/[^>]+>/gi,"")
+        .replace(/<[^>]*>/g,"")
+        .replace(/[*_`~]/g,"")
+        .replace(/&nbsp;/gi," ")
+        .replace(/&amp;/gi,"&").replace(/&quot;/gi,'"')
+        .replace(/&#39;|&apos;/gi,"'").replace(/&lt;/gi,"<").replace(/&gt;/gi,">")
+        .trim();
+    }
+    // Some recipe cards use checkbox items without ingredient/instruction headings.
+    function parseCheckboxRecipe(sourceLines, source, pageTitle) {
+      const checkbox=/^\s*(?:[-*+]\s+)?[▢☐□]\s*(.*)$/;
+      const first=sourceLines.findIndex(line=>checkbox.test(line) && checkbox.exec(line)[1].trim());
+      if (first<0) return null;
+      const ingredients=[];
+      let end=first;
+      for (;end<sourceLines.length;end++) {
+        const line=sourceLines[end];
+        if (!line.trim()) continue;
+        const item=line.match(checkbox);
+        if (!item) break;
+        const ingredient=cleanMarkdown(item[1]);
+        if (ingredient) ingredients.push(ingredient);
+      }
+      if (ingredients.length<2) return null;
+      const steps=[];
+      for (const raw of sourceLines.slice(end)) {
+        const line=raw.trim();
+        if (!line) continue;
+        if (/^#{1,6}\s/.test(line) ||
+            /^(?:nutrition(?: information)?(?:\s+is\b|\s*[:：])|(?:calories|notes?|related recipes|leave a (?:comment|review)|equipment|ערכים תזונתיים)\s*[:：])/i.test(cleanMarkdown(line)) ||
+            /^\*\*(?:running short on time|related recipes|notes?|tips|מתכונים נוספים|הערות)\b/i.test(line)) break;
+        if (/^!\[|^\[!\[|^\s*(?:[-*_]\s*){3,}$/.test(line)) break;
+        const step=cleanMarkdown(line.replace(/^(?:[-*+]\s+|\d+[.)]\s+)/,""));
+        if (step) steps.push(step);
+      }
+      if (!steps.length) return null;
+      const details=sourceLines.slice(Math.max(0,first-35),first).map(cleanMarkdown).join("\n");
+      const prepLine=details.match(/^\s*prep(?:aration)?(?:\s*time)?\s*:?\s*([^\n]+)$/im)?.[1] || "";
+      const cookLine=details.match(/^\s*cook(?:ing)?(?:\s*time)?\s*:?\s*([^\n]+)$/im)?.[1] || "";
+      const servingsMatch=details.match(/^\s*(?:servings?|serves|yield)\s*:?\s*(\d{1,4})\b/im);
+      const title=pageTitle || "";
+      const prep=parseMinutes(prepLine),cook=parseMinutes(cookLine);
+      const categories=categorize(title,ingredients);
+      const recipe=normalizeRecipe({id:uid(),title,source:safeURL(source),prep,cook,rest:0,servings:Number(servingsMatch?.[1] || 4),categories,tags:prep+cook>0 && prep+cook<=30?["quick"]:[],ingredients,steps,checked:[],art:artFor(categories)},{allowUntitled:true});
+      return {recipe,notice:"Extracted from a checkbox-style recipe card via Jina Reader. Verify all ingredients and instructions before saving. Unknown times are 0 and servings default to 4."};
+    }
+    function parseWebpage(markdown, source) {
+      if (typeof markdown!=="string" || !markdown.trim()) throw new Error("The webpage reader returned an empty page.");
+      const pageTitle=markdown.match(/^Title:\s*(.+)$/im)?.[1]?.trim();
+      const headings=[];
+      const sourceLines=markdown.split(/\r?\n/);
+      sourceLines.forEach((line,index)=>{
+        const heading=line.match(/^\s*(#{1,6})\s+(.+?)\s*#*\s*$/);
+        const standalone=!heading && !/^\s*(?:[-*+]\s+|\d+[.)]\s+)/.test(line) && sectionKind(line);
+        if(heading) headings.push({index,level:heading[1].length,title:cleanMarkdown(heading[2])});
+        else if(standalone) headings.push({index,level:2,title:cleanMarkdown(line)});
+      });
+      const ingredientsHeading=headings.find(item=>sectionKind(item.title)==="ingredients");
+      const methodHeading=headings.find(item=>ingredientsHeading && item.index>ingredientsHeading.index && sectionKind(item.title)==="steps");
+      if(!ingredientsHeading || !methodHeading) {
+        const card=parseCheckboxRecipe(sourceLines,source,pageTitle);
+        if(card) return card;
+        throw new Error("Couldn't find both ingredient and instruction sections on that page. Try another recipe page, or paste its recipe text instead.");
+      }
+      const ingredientEnd=headings.find(item=>item.index>ingredientsHeading.index && item.index<methodHeading.index && /^(?:nutrition\b|ערכים תזונתיים)/i.test(item.title) && sourceLines.slice(ingredientsHeading.index+1,item.index).some(line=>/^\s*(?:[-*+]\s+|\d+[.)]\s+)/.test(line)));
+      const rawIngredients=sourceLines.slice(ingredientsHeading.index+1,(ingredientEnd || methodHeading).index);
+      let nutrition=false;
+      const ingredients=rawIngredients.map(line=>{
+        if (/^\s*(?:#{1,6}\s*)?(?:nutrition\s*:|ערכים תזונתיים\s*:)/i.test(line)) nutrition=true;
+        if (nutrition || /^\s*#{1,6}\s/.test(line)) return "";
+        const item=line.match(/^\s*(?:[-*+•]\s+|\d+[.)]\s+|☐\s*)(.+)$/)?.[1];
+        return item ? cleanMarkdown(item) : "";
+      }).filter(item=>item && !/^(?:advertisement|ad|units?:|metric\s+us\b)/i.test(item));
+      // Some recipe pages render ingredients as plain paragraphs rather than a list.
+      if (!ingredients.length) {
+        ingredients.push(...rawIngredients.filter(line=>line.trim() && !/^\s*(?:#{1,6}\s|!\[|\[|units?:|metric\s+us\b)/i.test(line)).map(cleanMarkdown).filter(Boolean));
+      }
+      const methodEnd=headings.find(item=>item.index>methodHeading.index && item.level<=methodHeading.level && !/^(?:step\s*\d+|\d+\.?\s*)$/i.test(item.title));
+      let rawSteps=sourceLines.slice(methodHeading.index+1,methodEnd?.index ?? sourceLines.length);
+      const relatedIndex=rawSteps.findIndex(line=>/^\s*(?:#{1,6}\s*)?\*\*(?:לעוד|מתכונים נוספים|מתכונים דומים|הערות|טיפים|תגובות|related recipes|notes|tips)/i.test(line) || /^\s*(?:#{1,6}\s*|[-*+]\s*#{1,6}\s*)\[/.test(line));
+      if (relatedIndex>=0) rawSteps=rawSteps.slice(0,relatedIndex);
+      const steps=rawSteps.map(line=>{
+        const unbulleted=line.replace(/^\s*[-*+]\s+/,"").trim();
+        if(!unbulleted || /^#{1,6}\s/.test(unbulleted)) return "";
+        if(/^\s*(?:[-*_]\s*){3,}$/.test(unbulleted) || /^(?:advertisement|^ad$|print recipe|save recipe)$/i.test(unbulleted)) return "";
+        const numbered=unbulleted.match(/^\d+[.)]\s+(.+)$/);
+        return cleanMarkdown(numbered ? numbered[1] : unbulleted);
+      }).filter(Boolean);
+      if(!ingredients.length || !steps.length) throw new Error("The page loaded, but its recipe sections couldn't be extracted. Try copying the ingredients and instructions into the text box.");
+      const sourceURL=safeURL(source);
+      const title=headings.find(item=>item.level===1 && item.index<ingredientsHeading.index && !sectionKind(item.title))?.title || pageTitle || headings.find(item=>item.index<ingredientsHeading.index && !sectionKind(item.title) && !/^recipe\b/i.test(item.title))?.title || "";
+      const details=sourceLines.slice(0,ingredientsHeading.index).join("\n");
+      const prepLine=details.match(/^\s*(?:prep(?:aration)?(?:\s*time)?|זמן הכנה)\s*:?\s*([^\n]+)$/im)?.[1] || "";
+      const cookLine=details.match(/^\s*(?:cook(?:ing)?(?:\s*time)?|זמן בישול|זמן אפייה|זמן אפיה)\s*:?\s*([^\n]+)$/im)?.[1] || "";
+      const restLine=details.match(/^\s*(?:(?:rest|rise|prove|proof|ferment|chill|marinate)(?:ing)?(?:\s*time)?|זמן מנוחה|זמן התפחה)\s*:?\s*([^\n]+)$/im)?.[1] || "";
+      const servingsMatch=details.match(/(?:\b(?:serves?|servings?|makes?|yields?|cuts into)|מנות|מספר מנות|כמות מנות)\s*:?\s*(\d{1,4})\b/i) || details.match(/\b(\d{1,4})\s*מנות/);
+      const prep=parseMinutes(prepLine.replace(/[*_]/g,""));
+      const cook=parseMinutes(cookLine.replace(/[*_]/g,""));
+      const rest=parseMinutes(restLine.replace(/[*_]/g,""));
+      const categories=categorize(title,ingredients);
+      const tags=[];
+      if(prep+cook>0 && prep+cook<=30) tags.push("quick");
+      const recipe=normalizeRecipe({id:uid(),title,source:sourceURL,prep,cook,rest,servings:Number(servingsMatch?.[1] || 4),categories,tags,ingredients,steps,checked:[],art:artFor(categories)},{allowUntitled:true});
+      return {recipe,notice:"Extracted from the public webpage via Jina Reader. Verify the ingredients, timings, servings, and every instruction before saving. Unknown times are 0 and unknown servings default to 4; for time ranges the first value is used."};
+    }
+    function parseText(raw) {
+      let title = "", source = "", prep = 0, cook = 0, rest = 0, servings = 4;
+      let section = "", ingredients = [], steps = [], tags = [], explicitCategories = [];
+      let ingredientsStarted = false;
+      for (const original of raw.split(/\r?\n/)) {
+        const line = original.trim().replace(/^#{1,6}\s*/, "");
+        if (!line) continue;
+        const separator=line.indexOf(":");
+        const headingText=separator<0?line:line.slice(0,separator);
+        const kind=sectionKind(headingText);
+        if (kind) {
+          section = kind;
+          if (separator>=0) (section==="ingredients"?ingredients:steps).push(...lines(line.slice(separator+1)));
+          continue;
+        }
+        const meta = line.match(/^(title|source(?: url)?|url|prep(?:aration)?(?: time)?|cook(?:ing)?(?: time)?|rest(?: time)?|fermentation(?: time)?|servings?|serves|yield|tags?|categor(?:y|ies)|שם המתכון|שם|כותרת|מקור|קישור|זמן הכנה|זמן בישול|זמן אפייה|זמן אפיה|זמן מנוחה|זמן התפחה|מנות|מספר מנות|כמות מנות|תגיות|קטגוריה|קטגוריות)\s*:\s*(.*)$/i);
+        if (meta) {
+          const key = meta[1].toLowerCase(), value = meta[2].trim();
+          if (/^(title|שם המתכון|שם|כותרת)$/.test(key)) title=value;
+          else if (/^(source|url|מקור|קישור)/.test(key)) source=safeURL(value);
+          else if (/^(prep|זמן הכנה)/.test(key)) prep=parseMinutes(value);
+          else if (/^(cook|זמן בישול|זמן אפייה|זמן אפיה)/.test(key)) cook=parseMinutes(value);
+          else if (/^(rest|fermentation|זמן מנוחה|זמן התפחה)/.test(key)) rest=parseMinutes(value);
+          else if (/^(serv|yield|מנות|מספר מנות|כמות מנות)/.test(key)) servings=Number(value.match(/\d+/)?.[0] || 4);
+          else if (/^(tag|תגיות)/.test(key)) tags=value.split(/[,،]/).map(tag=>tag.trim()).filter(Boolean);
+          else explicitCategories=CATEGORIES.filter(category=>category.test.test(value) || `${category.label} ${category.short}`.toLowerCase().split(/[ /&]+/).some(word=>word.length>3 && value.toLowerCase().includes(word))).map(category=>category.id);
+          continue;
+        }
+        if (section==="ingredients") ingredients.push(...lines(line));
+        else if (section==="steps") steps.push(...lines(line));
+        else if (/^\d+[.)]\s/.test(line)) steps.push(...lines(line));
+        else if (!title && !ingredientsStarted && !/^\s*(?:[-*•]\s+|\d+(?:[.,/]\d+)?\s+|[¼½¾⅓⅔]\s*)/.test(line)) title=line;
+        else { ingredientsStarted=true; ingredients.push(...lines(line)); }
+      }
+      if (!ingredients.length || !steps.length) throw new Error("Couldn't identify ingredients and instructions. Use Ingredients / Instructions or מצרכים / אופן ההכנה headings, with one item per line.");
+      const categories = explicitCategories.length ? explicitCategories : categorize(title,ingredients);
+      if (prep+cook>0 && prep+cook<=30 && !tags.includes("quick")) tags.push("quick");
+      return normalizeRecipe({id:uid(),title,source,prep,cook,rest,servings,categories,tags,ingredients,steps,checked:[],art:artFor(categories)},{allowUntitled:true});
+    }
+    // Instagram's reader title can contain the entire multiline caption rather than a recipe title.
+    function parseInstagramCaption(markdown, source) {
+      const metadata=markdown.match(/^Title:\s*([\s\S]*?)\r?\nURL Source:/i)?.[1];
+      if (!metadata) throw new Error("The Instagram caption wasn't available. Copy the recipe text from the post and paste it here instead.");
+      const captionLines=metadata.replace(/[\u200e\u200f\u202a-\u202e\u2066-\u2069]/g,"").split(/\r?\n/);
+      const ingredientsIndex=captionLines.findIndex(line=>sectionKind(line)==="ingredients");
+      const stepsIndex=captionLines.findIndex((line,index)=>index>ingredientsIndex && sectionKind(line)==="steps");
+      if (ingredientsIndex<0 || stepsIndex<0) throw new Error("Couldn't find ingredients and instructions in the public Instagram caption. Copy the recipe text from the post and paste it here instead.");
+      const ingredients=[];
+      let group="";
+      for (const raw of captionLines.slice(ingredientsIndex+1,stepsIndex)) {
+        const line=cleanMarkdown(raw);
+        if (!line) continue;
+        if (/^[^:：]{1,80}[:：]$/.test(line)) { group=line.slice(0,-1).trim(); continue; }
+        const item=lines(line)[0];
+        if (item) ingredients.push(group ? `${group}: ${item}` : item);
+      }
+      const steps=captionLines.slice(stepsIndex+1).map(line=>cleanMarkdown(line).replace(/["”]\s*$/,"").trim()).filter(Boolean).flatMap(lines);
+      if (!ingredients.length || !steps.length) throw new Error("The Instagram caption didn't contain a complete ingredient and instruction list. Copy the recipe text from the post and paste it here instead.");
+      const categories=categorize("",ingredients);
+      const recipe=normalizeRecipe({id:uid(),title:"",source,prep:0,cook:0,rest:0,servings:4,categories,tags:[],ingredients,steps,checked:[],art:artFor(categories)},{allowUntitled:true});
+      return {recipe,notice:"Extracted from the public Instagram caption via Jina Reader, not from the video. Verify all ingredients and steps. Unknown times are 0 and servings default to 4."};
+    }
+    /**
+     * Webpage reader integration. For AI extraction, replace this adapter with
+     * a request to an authenticated backend; never put a private API key here.
+     */
+    const RecipeAI = {
+      async extract(input) {
+        if (/^https?:\/\/\S+$/i.test(input)) {
+          const source=safeURL(input);
+          const url=new URL(source);
+          const hostname=url.hostname.toLowerCase().replace(/^\[|\]$/g,"");
+          if(url.username || url.password) throw new Error("Remove any username or password from the webpage link before importing it.");
+          if(hostname==="r.jina.ai" || hostname==="localhost" || hostname.endsWith(".localhost") || hostname.endsWith(".local") || hostname.endsWith(".internal") || hostname.endsWith(".test") || /^[\d.:]+$/.test(hostname)) {
+            throw new Error("Enter a public recipe webpage address, not a local, private, or reader-service URL.");
+          }
+          const controller=new AbortController();
+          const timeout=setTimeout(()=>controller.abort(),45000);
+          let response;
+          try {
+            response=await fetch(`https://r.jina.ai/${source}`,{
+              signal:controller.signal,
+              headers:{"Accept":"text/plain","X-Timeout":"30","X-Remove-Selector":"header,nav,footer,aside","DNT":"true"}
+            });
+          } catch(error) {
+            if(error.name==="AbortError") throw new Error("The webpage took too long to load. Try again, or paste the recipe text instead.");
+            throw new Error("Couldn't fetch that webpage. It may be blocked or unavailable; try another recipe page or paste the recipe text.");
+          } finally { clearTimeout(timeout); }
+          if(response.status===429) throw new Error("The webpage reader is temporarily rate-limited. Wait a little and try again.");
+          if(!response.ok) throw new Error(`The webpage reader couldn't open this page (HTTP ${response.status}). Try another page or paste the recipe text.`);
+          const markdown=await response.text();
+          if(markdown.length>250000) throw new Error("This webpage is too large to import. Copy and paste the recipe text instead.");
+          if (hostname==="instagram.com" || hostname.endsWith(".instagram.com")) return parseInstagramCaption(markdown,source);
+          return parseWebpage(markdown,source);
+        }
+        if (/^[a-z][a-z0-9+.-]*:\/\//i.test(input)) throw new Error("Use an http:// or https:// recipe link.");
+        return {recipe:parseText(input),notice:"Locally parsed draft — please check quantities, timings, categories, and instructions before saving. Unknown times are set to 0; default servings are 4."};
+      }
+    };
+    document.addEventListener("click", event => {
+      const close = event.target.closest("[data-close]");
+      if (close) { $(`#${close.dataset.close}`).close(); return; }
+      const open = event.target.closest("[data-open]");
+      if (open) { openDetail(open.dataset.open); return; }
+      const filter = event.target.closest("[data-category]");
+      if (filter) { activeCategory=filter.dataset.category; render(); $(`[data-category="${activeCategory}"]`).focus(); return; }
+      const action = event.target.closest("[data-action]")?.dataset.action;
+      if (action==="add") openEditor();
+      if (action==="reset") { activeCategory="all"; searchTerm=""; $("#search").value=""; render(); }
+      if (action==="import-json") $("#json-file").click();
+      if (action==="export") {
+        const blob = new Blob([JSON.stringify({version:1,exportedAt:new Date().toISOString(),recipes},null,2)],{type:"application/json"});
+        const url = URL.createObjectURL(blob), anchor = document.createElement("a");
+        anchor.href=url;anchor.download=`my-recipe-treasure-${new Date().toISOString().slice(0,10)}.json`;
+        document.body.append(anchor);anchor.click();anchor.remove();
+        setTimeout(()=>URL.revokeObjectURL(url),1000);
+        notify("Recipe backup exported.");
+      }
+    });
+    $("#search").addEventListener("input",event=>{searchTerm=event.target.value;render();});
+    $("#demo-info").addEventListener("click",()=>$("#info-dialog").showModal());
+    $("#ingest-form").addEventListener("submit",async event=>{
+      event.preventDefault();
+      if (importBusy) return;
+      const input=$("#recipe-input").value.trim();
+      if (!input) { notify("Paste a recipe link or recipe text first.",true); return; }
+      importBusy=true;
+      const button=$("#transcribe-button");button.disabled=true;button.querySelector("span").textContent=/^https?:\/\//i.test(input)?"Fetching webpage...":"Parsing recipe...";
+      try {
+        const result=await RecipeAI.extract(input);
+        const recipe=normalizeRecipe(result.recipe,{allowUntitled:true});
+        const notice=typeof result.notice==="string"?result.notice:"Review this extracted draft before saving.";
+        openEditor(recipe,recipe.title ? notice : `No title was found. Add a title before saving. ${notice}`);
+      } catch(error) { console.error("Recipe extraction failed",error);notify(error.message || "Recipe extraction failed. Try the manual form.",true); }
+      finally { importBusy=false;button.disabled=false;button.querySelector("span").textContent="Transcribe & Import"; }
+    });
+    $("#recipe-form").addEventListener("submit",event=>{
+      event.preventDefault();
+      const form=event.currentTarget, data=new FormData(form);
+      const ingredients=lines(data.get("ingredients")), steps=lines(data.get("steps"));
+      let categories=data.getAll("category");
+      if (!categories.length) categories=categorize(data.get("title"),ingredients);
+      const old=recipes.find(recipe=>recipe.id===editingId);
+      try {
+        const recipe=normalizeRecipe({
+          id:editingId || pendingImport?.id || uid(),title:data.get("title"),source:data.get("source"),
+          prep:Number(data.get("prep")),cook:Number(data.get("cook")),rest:Number(data.get("rest")),servings:Number(data.get("servings")),
+          categories,tags:data.get("tags").split(",").map(tag=>tag.trim()).filter(Boolean),ingredients,steps,
+          checked:old && JSON.stringify(old.ingredients)===JSON.stringify(ingredients)?old.checked:[],
+          art:artFor(categories),demo:pendingImport?.demo===true
+        });
+        const next=editingId?recipes.map(item=>item.id===editingId?recipe:item):[recipe,...recipes];
+        if (commit(next)) {
+          $("#editor").close();
+          if ($("#detail").open) openDetail(recipe.id);
+          if (!editingId) { activeCategory="all";searchTerm="";$("#search").value="";render(); }
+          notify(editingId?"Recipe updated.":"A little inspiration, safely kept.");
+        }
+      } catch(error) { $("#editor-error").textContent=error.message; }
+    });
+    $("#detail-content").addEventListener("change",event=>{
+      if (!event.target.matches("[data-ingredient]")) return;
+      const recipe=recipes.find(item=>item.id===detailId), index=Number(event.target.dataset.ingredient);
+      if (!recipe) return;
+      const checked=new Set(recipe.checked);
+      event.target.checked?checked.add(index):checked.delete(index);
+      if (!commit(recipes.map(item=>item.id===detailId?{...item,checked:[...checked]}:item))) event.target.checked=recipe.checked.includes(index);
+    });
+    $("#detail-content").addEventListener("click",event=>{
+      if (event.target.closest("#edit-recipe")) openEditor(recipes.find(item=>item.id===detailId));
+      if (event.target.closest("#delete-recipe")) $("#confirm-dialog").showModal();
+    });
+    $("#confirm-delete").addEventListener("click",()=>{
+      if (commit(recipes.filter(recipe=>recipe.id!==detailId))) {
+        $("#confirm-dialog").close();$("#detail").close();detailId=null;notify("Recipe removed.");
+      }
+    });
+    $("#json-file").addEventListener("change",async event=>{
+      const file=event.target.files[0];
+      if (!file) return;
+      try {
+        if (file.size>5*1024*1024) throw new Error("Please choose a JSON backup smaller than 5 MB.");
+        const imported=readRecipeFile(JSON.parse(await file.text()));
+        // Same IDs update existing recipes; unrelated recipes are retained.
+        const merged=new Map(recipes.map(recipe=>[recipe.id,recipe]));
+        imported.forEach(recipe=>merged.set(recipe.id,recipe));
+        if (merged.size>2000) throw new Error("The combined collection would exceed 2,000 recipes.");
+        if (commit([...merged.values()])) {
+          activeCategory="all";searchTerm="";$("#search").value="";render();
+          notify(`Imported ${imported.length} recipe${imported.length===1?"":"s"}. Matching IDs updated; other recipes kept.`);
+        }
+      } catch(error) { console.error("JSON import failed",error);notify(`Import failed: ${error.message}`,true); }
+      finally { event.target.value=""; }
+    });
+    // Native dialogs provide focus containment, Escape handling, and focus return.
+    document.querySelectorAll("dialog").forEach(dialog=>{
+      dialog.addEventListener("click",event=>{
+        if (event.target!==dialog) return;
+        const rect=dialog.getBoundingClientRect();
+        if (event.clientX<rect.left || event.clientX>rect.right || event.clientY<rect.top || event.clientY>rect.bottom) dialog.close();
+      });
+    });
+    load();
+  </script>
+</body>
+</html>
